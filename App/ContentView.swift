@@ -5,10 +5,11 @@ struct ContentView: View {
     @StateObject private var model = CameraViewModel()
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
+        ZStack(alignment: .bottom) {
             content
         }
+        .safeAreaInset(edge: .top) { header }
+        .safeAreaInset(edge: .bottom) { controlsBar }
         .onAppear { model.onAppear() }
         .onDisappear { model.onDisappear() }
     }
@@ -26,7 +27,7 @@ struct ContentView: View {
     private var content: some View {
         switch model.authState {
         case .authorized:
-            ZStack(alignment: .bottom) {
+            ZStack {
                 CameraPreviewView(session: model.controller.session)
                     .ignoresSafeArea()
 
@@ -43,8 +44,6 @@ struct ContentView: View {
                         .accessibilityLabel("Ghost overlay")
                 }
             }
-            // Keep controls pinned within safe area even on rotation
-            .safeAreaInset(edge: .bottom) { controlsBar }
         case .unknown:
             VStack(spacing: 16) {
                 Text("Camera permission needed").font(.title3).bold()
