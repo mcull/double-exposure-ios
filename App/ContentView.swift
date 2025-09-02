@@ -83,6 +83,14 @@ struct ContentView: View {
                 Spacer()
             }
             .padding(.bottom, 24)
+            if model.ghostImage != nil && model.shot2Image != nil {
+                Button(action: { model.blendSimple() }) {
+                    Text("Blend")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+            }
         }
         .padding(.top, 12)
         .padding(.horizontal)
@@ -90,6 +98,11 @@ struct ContentView: View {
             LinearGradient(gradient: Gradient(colors: [.black.opacity(0.0), .black.opacity(0.4)]), startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea(edges: .bottom)
         )
+        .sheet(isPresented: $model.showingBlendPreview) {
+            BlendPreviewView(image: model.blendedImage, onDismiss: {
+                model.showingBlendPreview = false
+            })
+        }
     }
 
     private var topControls: some View {
@@ -151,6 +164,34 @@ struct ContentView: View {
                 p.move(to: CGPoint(x: 0, y: 2*h/3)); p.addLine(to: CGPoint(x: w, y: 2*h/3))
             }
             .stroke(Color.white.opacity(0.35), lineWidth: 0.6)
+        }
+    }
+}
+
+private struct BlendPreviewView: View {
+    let image: UIImage?
+    var onDismiss: () -> Void
+
+    var body: some View {
+        NavigationView {
+            ZStack {
+                Color.black.ignoresSafeArea()
+                if let img = image {
+                    Image(uiImage: img)
+                        .resizable()
+                        .scaledToFit()
+                        .padding()
+                } else {
+                    ProgressView()
+                }
+            }
+            .navigationTitle("Blend Preview")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close", action: onDismiss)
+                }
+            }
         }
     }
 }

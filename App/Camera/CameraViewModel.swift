@@ -10,6 +10,8 @@ final class CameraViewModel: ObservableObject {
     @Published var lastCapturedImage: UIImage?
     @Published var ghostImage: UIImage?
     @Published var shot2Image: UIImage?
+    @Published var blendedImage: UIImage?
+    @Published var showingBlendPreview: Bool = false
     @Published var overlayOpacity: Double = 0.5
     @Published var isLockedAEAF: Bool = false
     @Published var showGrid: Bool = false
@@ -75,11 +77,20 @@ final class CameraViewModel: ObservableObject {
     func resetGhost() {
         ghostImage = nil
         shot2Image = nil
+        blendedImage = nil
+        showingBlendPreview = false
         overlayOpacity = 0.5
         stage = .idle
         if isLockedAEAF {
             isLockedAEAF = false
             controller.setAEAFLocked(false)
         }
+    }
+
+    func blendSimple() {
+        guard let base = ghostImage, let top = shot2Image else { return }
+        let alpha = overlayOpacity
+        blendedImage = ImageProcessor.alphaBlend(background: base, foreground: top, alpha: alpha)
+        showingBlendPreview = blendedImage != nil
     }
 }
