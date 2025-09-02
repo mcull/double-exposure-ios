@@ -42,9 +42,9 @@ struct ContentView: View {
                         .ignoresSafeArea()
                         .accessibilityLabel("Ghost overlay")
                 }
-
-                controlsBar
             }
+            // Keep controls pinned within safe area even on rotation
+            .safeAreaInset(edge: .bottom) { controlsBar }
         case .unknown:
             VStack(spacing: 16) {
                 Text("Camera permission needed").font(.title3).bold()
@@ -96,7 +96,6 @@ struct ContentView: View {
         .padding(.horizontal)
         .background(
             LinearGradient(gradient: Gradient(colors: [.black.opacity(0.0), .black.opacity(0.4)]), startPoint: .top, endPoint: .bottom)
-                .ignoresSafeArea(edges: .bottom)
         )
         .sheet(isPresented: $model.showingBlendPreview) {
             BlendPreviewView(image: model.blendedImage, onDismiss: {
