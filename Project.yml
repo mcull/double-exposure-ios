@@ -1,0 +1,22 @@
+name: DoubleExposureCamera
+options:
+  minimumXcodeGenVersion: 2.30.0
+packages: {}
+targets:
+  DoubleExposureCamera:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: App
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.DoubleExposureCamera
+        CODE_SIGN_STYLE: Automatic
+        INFOPLIST_FILE: App/Info.plist
+        SWIFT_VERSION: 5.9
+    scheme:
+      testTargets: []
+    postCompileScripts: []
+    postBuildScripts: []
+
