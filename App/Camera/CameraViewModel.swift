@@ -35,7 +35,11 @@ final class CameraViewModel: ObservableObject {
                 self?.isCapturing = false
             }
         }
-        controller.onCaptureStateChanged = { [weak self] in Task { @MainActor in self?.isCapturing = $0 } }
+        controller.onCaptureStateChanged = { [weak self] capturing in
+            Task { @MainActor in
+                self?.isCapturing = capturing
+            }
+        }
         refreshAuthorizationStatus()
         controller.configureSession()
     }
@@ -74,7 +78,9 @@ final class CameraViewModel: ObservableObject {
         orientationTracker.start()
         orientationTracker.$orientation
             .receive(on: RunLoop.main)
-            .sink { [weak self] in self?.currentDeviceOrientation = $0 }
+            .sink { [weak self] newOrientation in
+                self?.currentDeviceOrientation = newOrientation
+            }
             .store(in: &cancellables)
         if authState == .authorized { controller.startSession() }
     }
