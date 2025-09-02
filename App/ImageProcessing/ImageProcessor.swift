@@ -27,7 +27,7 @@ enum ImageProcessor {
         // Reduce alpha of foreground using CIColorMatrix
         let alphaFilter = CIFilter.colorMatrix()
         alphaFilter.inputImage = positionedFG
-        alphaFilter.aVector = CIVector(x: 0, y: 0, z: 0, w: Float(alpha))
+        alphaFilter.aVector = CIVector(x: CGFloat(0), y: CGFloat(0), z: CGFloat(0), w: alpha)
         guard let fgWithAlpha = alphaFilter.outputImage else { return nil }
 
         // Composite: SourceOver (foreground over background)
@@ -40,4 +40,3 @@ enum ImageProcessor {
         return UIImage(cgImage: cg, scale: background.scale, orientation: background.imageOrientation)
     }
 }
-
