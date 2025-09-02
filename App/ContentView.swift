@@ -85,24 +85,24 @@ struct ContentView: View {
             topControls
             HStack {
                 Spacer()
-                Button(action: { model.capture() }) {
+                Button(action: { model.capture(); haptic() }) {
                     Circle()
-                        .fill(.white)
+                        .fill(model.isCapturing ? Color.gray.opacity(0.6) : .white)
                         .frame(width: 72, height: 72)
                         .overlay(Circle().stroke(Color.black.opacity(0.15), lineWidth: 2))
                         .shadow(radius: 2)
                 }
+                .disabled(model.isCapturing)
                 Spacer()
             }
             .padding(.bottom, 24)
-            if model.ghostImage != nil && model.shot2Image != nil {
-                Button(action: { model.blendSimple() }) {
-                    Text("Blend")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
+            Button(action: { model.blendSimple() }) {
+                Text("Blend")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
             }
+            .buttonStyle(.borderedProminent)
+            .disabled(!(model.ghostImage != nil && model.shot2Image != nil))
         }
         .padding(.top, 12)
         .padding(.horizontal)
@@ -177,6 +177,11 @@ struct ContentView: View {
             .stroke(Color.white.opacity(0.35), lineWidth: 0.6)
         }
     }
+}
+
+private func haptic() {
+    let gen = UIImpactFeedbackGenerator(style: .light)
+    gen.impactOccurred()
 }
 
 private struct BlendPreviewView: View {

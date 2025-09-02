@@ -8,6 +8,7 @@ final class CameraController: NSObject {
 
     // Callback for captured photo as UIImage data
     var onPhotoCapture: ((UIImage) -> Void)?
+    var onCaptureStateChanged: ((Bool) -> Void)? // true when capturing
 
     override init() {
         super.init()
@@ -96,6 +97,7 @@ final class CameraController: NSObject {
     }
 
     func capturePhoto() {
+        onCaptureStateChanged?(true)
         let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
         settings.isHighResolutionPhotoEnabled = true
         if photoOutput.supportedFlashModes.contains(.off) {
@@ -109,9 +111,11 @@ extension CameraController: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         if let error = error {
             print("Photo capture error: \(error)")
+            onCaptureStateChanged?(false)
             return
         }
         guard let data = photo.fileDataRepresentation(), let image = UIImage(data: data) else { return }
         onPhotoCapture?(image)
+        onCaptureStateChanged?(false)
     }
 }

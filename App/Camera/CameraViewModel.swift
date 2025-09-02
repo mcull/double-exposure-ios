@@ -17,6 +17,7 @@ final class CameraViewModel: ObservableObject {
     @Published var isLockedAEAF: Bool = false
     @Published var showGrid: Bool = false
     @Published var stage: Stage = .idle
+    @Published var isCapturing: Bool = false
     @Published var initialDeviceOrientation: UIDeviceOrientation?
     @Published var currentDeviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
 
@@ -31,8 +32,10 @@ final class CameraViewModel: ObservableObject {
                 let normalized = image.normalizedUpOrientation()
                 self?.lastCapturedImage = normalized
                 self?.handleCapture(normalized)
+                self?.isCapturing = false
             }
         }
+        controller.onCaptureStateChanged = { [weak self] in Task { @MainActor in self?.isCapturing = $0 } }
         refreshAuthorizationStatus()
         controller.configureSession()
     }
@@ -81,7 +84,11 @@ final class CameraViewModel: ObservableObject {
         controller.stopSession()
     }
 
-    func capture() { controller.capturePhoto() }
+    func capture() {
+        guard !isCapturing else { return }
+        isCapturing = true
+        controller.capturePhoto()
+    }
 
     func toggleAEAF() {
         isLockedAEAF.toggle()
