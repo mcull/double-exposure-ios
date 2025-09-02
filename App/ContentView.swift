@@ -171,6 +171,9 @@ struct ContentView: View {
 private struct BlendPreviewView: View {
     let image: UIImage?
     var onDismiss: () -> Void
+    @State private var showShare = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
 
     var body: some View {
         NavigationView {
@@ -191,7 +194,33 @@ private struct BlendPreviewView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close", action: onDismiss)
                 }
+                ToolbarItemGroup(placement: .confirmationAction) {
+                    if let img = image {
+                        Button("Share") { showShare = true }
+                        Button("Save") { save(img) }
+                    }
+                }
             }
+        }
+        .sheet(isPresented: $showShare) {
+            if let img = image { ShareSheet(activityItems: [img]) }
+        }
+        .alert("Save", isPresented: $showAlert, actions: {
+            Button("OK", role: .cancel) {}
+        }, message: {
+            Text(alertMessage)
+        })
+    }
+
+    private func save(_ img: UIImage) {
+        SaveManager.saveToPhotos(image: img) { result in
+            switch result {
+            case .success:
+                alertMessage = "Saved to Photos"
+            case .failure(let error):
+                alertMessage = error.localizedDescription
+            }
+            showAlert = true
         }
     }
 }
