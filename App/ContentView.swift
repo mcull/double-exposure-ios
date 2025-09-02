@@ -30,6 +30,19 @@ struct ContentView: View {
                 CameraPreviewView(session: model.controller.session)
                     .ignoresSafeArea()
 
+                // Gridlines
+                if model.showGrid { gridOverlay.ignoresSafeArea() }
+
+                // Ghost overlay
+                if let ghost = model.ghostImage {
+                    Image(uiImage: ghost)
+                        .resizable()
+                        .scaledToFill()
+                        .opacity(model.overlayOpacity)
+                        .ignoresSafeArea()
+                        .accessibilityLabel("Ghost overlay")
+                }
+
                 controlsBar
             }
         case .unknown:
@@ -57,14 +70,7 @@ struct ContentView: View {
 
     private var controlsBar: some View {
         VStack(spacing: 12) {
-            if let img = model.lastCapturedImage {
-                Image(uiImage: img)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 64, height: 64)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(.white.opacity(0.6), lineWidth: 1))
-            }
+            topControls
             HStack {
                 Spacer()
                 Button(action: { model.capture() }) {
@@ -84,6 +90,68 @@ struct ContentView: View {
             LinearGradient(gradient: Gradient(colors: [.black.opacity(0.0), .black.opacity(0.4)]), startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea(edges: .bottom)
         )
+    }
+
+    private var topControls: some View {
+        VStack(spacing: 10) {
+            HStack {
+                if let img = model.ghostImage {
+                    Image(uiImage: img)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 56, height: 56)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(.white.opacity(0.6), lineWidth: 1))
+                        .accessibilityLabel("Ghost thumbnail")
+                }
+                Spacer()
+                Toggle("AE/AF Lock", isOn: Binding(get: { model.isLockedAEAF }, set: { _ in model.toggleAEAF() }))
+                    .toggleStyle(.switch)
+                    .labelsHidden()
+                    .tint(.orange)
+                Button(action: { model.showGrid.toggle() }) {
+                    Image(systemName: model.showGrid ? "grid.circle.fill" : "grid.circle")
+                        .font(.title2)
+                        .foregroundStyle(.white)
+                }
+            }
+
+            if model.ghostImage != nil {
+                HStack {
+                    Image(systemName: "circle.lefthalf.filled").foregroundStyle(.white.opacity(0.8))
+                    Slider(value: $model.overlayOpacity, in: 0...1)
+                    Image(systemName: "circle.righthalf.filled").foregroundStyle(.white.opacity(0.8))
+                }
+            }
+
+            HStack {
+                if model.ghostImage != nil {
+                    Button("Retake 1") { model.resetGhost() }
+                        .buttonStyle(.bordered)
+                        .tint(.white.opacity(0.8))
+                }
+                Spacer()
+                Text(model.stage == .idle ? "Capture 1" : "Capture 2")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.9))
+            }
+        }
+    }
+
+    private var gridOverlay: some View {
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = geo.size.height
+            Path { p in
+                // Vertical thirds
+                p.move(to: CGPoint(x: w/3, y: 0)); p.addLine(to: CGPoint(x: w/3, y: h))
+                p.move(to: CGPoint(x: 2*w/3, y: 0)); p.addLine(to: CGPoint(x: 2*w/3, y: h))
+                // Horizontal thirds
+                p.move(to: CGPoint(x: 0, y: h/3)); p.addLine(to: CGPoint(x: w, y: h/3))
+                p.move(to: CGPoint(x: 0, y: 2*h/3)); p.addLine(to: CGPoint(x: w, y: 2*h/3))
+            }
+            .stroke(Color.white.opacity(0.35), lineWidth: 0.6)
+        }
     }
 }
 

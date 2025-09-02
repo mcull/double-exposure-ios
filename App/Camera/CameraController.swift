@@ -62,6 +62,39 @@ final class CameraController: NSObject {
         }
     }
 
+    func setAEAFLocked(_ locked: Bool) {
+        sessionQueue.async {
+            guard let device = (self.session.inputs.first as? AVCaptureDeviceInput)?.device else { return }
+            do {
+                try device.lockForConfiguration()
+                if locked {
+                    if device.isFocusModeSupported(.locked) {
+                        device.focusMode = .locked
+                    }
+                    if device.isExposureModeSupported(.locked) {
+                        device.exposureMode = .locked
+                    }
+                    if device.isWhiteBalanceModeSupported(.locked) {
+                        device.whiteBalanceMode = .locked
+                    }
+                } else {
+                    if device.isFocusModeSupported(.continuousAutoFocus) {
+                        device.focusMode = .continuousAutoFocus
+                    }
+                    if device.isExposureModeSupported(.continuousAutoExposure) {
+                        device.exposureMode = .continuousAutoExposure
+                    }
+                    if device.isWhiteBalanceModeSupported(.continuousAutoWhiteBalance) {
+                        device.whiteBalanceMode = .continuousAutoWhiteBalance
+                    }
+                }
+                device.unlockForConfiguration()
+            } catch {
+                print("AE/AF lock error: \(error)")
+            }
+        }
+    }
+
     func capturePhoto() {
         let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
         settings.isHighResolutionPhotoEnabled = true
@@ -82,4 +115,3 @@ extension CameraController: AVCapturePhotoCaptureDelegate {
         onPhotoCapture?(image)
     }
 }
-
