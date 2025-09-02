@@ -22,8 +22,9 @@ final class CameraViewModel: ObservableObject {
     init() {
         controller.onPhotoCapture = { [weak self] image in
             Task { @MainActor in
-                self?.lastCapturedImage = image
-                self?.handleCapture(image)
+                let normalized = image.normalizedUpOrientation()
+                self?.lastCapturedImage = normalized
+                self?.handleCapture(normalized)
             }
         }
         refreshAuthorizationStatus()

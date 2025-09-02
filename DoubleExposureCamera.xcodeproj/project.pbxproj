@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0DCC10C6B8421DF3AC7A777F /* DoubleExposureCameraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4302A9149B9ABD1050A1E0CC /* DoubleExposureCameraApp.swift */; };
+		1A2E5FBD744B562AEC559932 /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6359E4B7FA04CBACEF1B1959 /* SaveManager.swift */; };
+		2E61BA169F0DA5B9B2987767 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185548357F40E7CC6CF3E79C /* ShareSheet.swift */; };
 		6CEEB99D637C8B9A67587C4D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B636E4181DBAF28A65070D15 /* ContentView.swift */; };
 		8BA155CADF528E507BF25D9F /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34345C6E975988191F233C2D /* CameraViewModel.swift */; };
 		99EDEF2D056CD25721915CFA /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D111458760CB79F097AA5 /* ImageProcessor.swift */; };
@@ -17,10 +19,12 @@
 
 /* Begin PBXFileReference section */
 		054D111458760CB79F097AA5 /* ImageProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessor.swift; sourceTree = "<group>"; };
+		185548357F40E7CC6CF3E79C /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		34345C6E975988191F233C2D /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
 		429E94CB7B8EC91A40FD1583 /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		4302A9149B9ABD1050A1E0CC /* DoubleExposureCameraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleExposureCameraApp.swift; sourceTree = "<group>"; };
 		5C4AA650E784558D30F0C711 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		6359E4B7FA04CBACEF1B1959 /* SaveManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
 		B636E4181DBAF28A65070D15 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		CDA466EA1E385B81AD619D2F /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
 		FBC2EF6F3CD7BC705B83F86F /* DoubleExposureCamera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DoubleExposureCamera.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -35,6 +39,15 @@
 			path = ImageProcessing;
 			sourceTree = "<group>";
 		};
+		6D58D7D03B0A75B8D8140016 /* Sharing */ = {
+			isa = PBXGroup;
+			children = (
+				6359E4B7FA04CBACEF1B1959 /* SaveManager.swift */,
+				185548357F40E7CC6CF3E79C /* ShareSheet.swift */,
+			);
+			path = Sharing;
+			sourceTree = "<group>";
+		};
 		86D472BD6AFCB401EE43D7BA /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -43,6 +56,7 @@
 				5C4AA650E784558D30F0C711 /* Info.plist */,
 				C9BC8FB9347909AEC396660E /* Camera */,
 				09B3D94A620566E370D004A5 /* ImageProcessing */,
+				6D58D7D03B0A75B8D8140016 /* Sharing */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -136,6 +150,8 @@
 				6CEEB99D637C8B9A67587C4D /* ContentView.swift in Sources */,
 				0DCC10C6B8421DF3AC7A777F /* DoubleExposureCameraApp.swift in Sources */,
 				99EDEF2D056CD25721915CFA /* ImageProcessor.swift in Sources */,
+				1A2E5FBD744B562AEC559932 /* SaveManager.swift in Sources */,
+				2E61BA169F0DA5B9B2987767 /* ShareSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,12 +166,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = N7ZX6XG86A;
 				INFOPLIST_FILE = App/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = ventures.cull.DoubleExposureCamera;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.DoubleExposureCamera;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -170,12 +186,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = N7ZX6XG86A;
 				INFOPLIST_FILE = App/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = ventures.cull.DoubleExposureCamera;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.DoubleExposureCamera;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
