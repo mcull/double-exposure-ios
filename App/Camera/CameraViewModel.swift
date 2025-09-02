@@ -1,5 +1,6 @@
 import AVFoundation
 import SwiftUI
+import Combine
 
 @MainActor
 final class CameraViewModel: ObservableObject {
@@ -16,6 +17,11 @@ final class CameraViewModel: ObservableObject {
     @Published var isLockedAEAF: Bool = false
     @Published var showGrid: Bool = false
     @Published var stage: Stage = .idle
+    @Published var initialDeviceOrientation: UIDeviceOrientation?
+    @Published var currentDeviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
+
+    let orientationTracker = OrientationTracker()
+    private var cancellables = Set<AnyCancellable>()
 
     let controller = CameraController()
 
@@ -39,6 +45,7 @@ final class CameraViewModel: ObservableObject {
             // Lock AE/AF when ghosting starts (user can toggle off)
             isLockedAEAF = true
             controller.setAEAFLocked(true)
+            initialDeviceOrientation = currentDeviceOrientation
         case .ghosting:
             shot2Image = image
             // Keep stage; blending will be implemented in next milestones
@@ -61,10 +68,16 @@ final class CameraViewModel: ObservableObject {
     }
 
     func onAppear() {
+        orientationTracker.start()
+        orientationTracker.$orientation
+            .receive(on: RunLoop.main)
+            .sink { [weak self] in self?.currentDeviceOrientation = $0 }
+            .store(in: &cancellables)
         if authState == .authorized { controller.startSession() }
     }
 
     func onDisappear() {
+        orientationTracker.stop()
         controller.stopSession()
     }
 

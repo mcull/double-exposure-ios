@@ -15,9 +15,22 @@ struct ContentView: View {
     }
 
     private var header: some View {
-        HStack {
+        HStack(spacing: 12) {
             Text("Double Exposure Camera").font(.headline)
             Spacer()
+            // Simple orientation indicator relative to Shot 1
+            if let initial = model.initialDeviceOrientation, model.stage == .ghosting {
+                HStack(spacing: 6) {
+                    Image(systemName: "viewfinder")
+                    Text(initial.label)
+                    Text("→")
+                    Text(model.currentDeviceOrientation.label)
+                }
+                .font(.caption)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+                .background(.ultraThinMaterial, in: Capsule())
+            }
         }
         .padding()
         .background(Color(UIColor.secondarySystemBackground))
