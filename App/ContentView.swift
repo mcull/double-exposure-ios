@@ -40,21 +40,50 @@ struct ContentView: View {
     private var content: some View {
         switch model.authState {
         case .authorized:
-            ZStack {
-                CameraPreviewView(session: model.controller.session)
+            GeometryReader { geo in
+                let size = geo.size
+                // Compute 4:3 frame centered on screen
+                let w = size.width
+                let h = w * 4.0/3.0
+                let frameHeight = min(h, size.height)
+                let verticalPadding = max(0, (size.height - frameHeight) / 2)
+
+                ZStack {
+                    // Fullscreen live preview
+                    CameraPreviewView(session: model.controller.session)
+                        .ignoresSafeArea()
+
+                    // Ghost overlay clipped to 4:3 center frame
+                    if let ghost = model.ghostImage {
+                        Image(uiImage: ghost)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: w, height: frameHeight)
+                            .clipped()
+                            .padding(.vertical, verticalPadding)
+                            .opacity(model.overlayOpacity)
+                            .accessibilityLabel("Ghost overlay")
+                    }
+
+                    // Letterbox overlays above/below the 4:3 center
+                    VStack(spacing: 0) {
+                        Color.black.opacity(0.5).frame(height: verticalPadding)
+                        Spacer(minLength: 0)
+                        Color.black.opacity(0.5).frame(height: verticalPadding)
+                    }
                     .ignoresSafeArea()
 
-                // Gridlines
-                if model.showGrid { gridOverlay.ignoresSafeArea() }
-
-                // Ghost overlay
-                if let ghost = model.ghostImage {
-                    Image(uiImage: ghost)
-                        .resizable()
-                        .scaledToFill()
-                        .opacity(model.overlayOpacity)
+                    // Optional grid over the 4:3 area only
+                    if model.showGrid {
+                        VStack(spacing: 0) {
+                            Spacer().frame(height: verticalPadding)
+                            gridOverlay
+                                .frame(width: w, height: frameHeight)
+                                .clipped()
+                            Spacer().frame(height: verticalPadding)
+                        }
                         .ignoresSafeArea()
-                        .accessibilityLabel("Ghost overlay")
+                    }
                 }
             }
         case .unknown:
